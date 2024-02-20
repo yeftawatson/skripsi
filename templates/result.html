@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Manipulasi Gambar</title>
+</head>
+<body>
+    <h1>Hasil Manipulasi Gambar</h1>
+    <h2>Gambar Asli:</h2>
+    <img src="{{ url_for('static', filename=filename) }}" alt="Gambar Asli">
+
+    <h2>Gambar Hasil Manipulasi:</h2>
+    <div>
+        {% for image in manipulated_images %}
+            <img src="{{ url_for('static', filename=image) }}" alt="Manipulated Image">
+        {% endfor %}
+    </div>
+</body>
+</html>
