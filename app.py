@@ -90,8 +90,8 @@ if __name__ == '__main__':
     
 #     # Ambil nilai di pojok kiri atas dari koefisien DCT
 #     hash_code = ""
-#     for i in range(hash_size // 2):
-#         for j in range(hash_size // 2):
+#     for i in range(hash_size):
+#         for j in range(hash_size):
 #             hash_code += "1" if dct_result[i, j] > dct_result[i + 1, j + 1] else "0"
                 
 #     return hash_code
@@ -129,8 +129,8 @@ if __name__ == '__main__':
 #     # Baca gambar
 #     print("Silahkan Pilih Gambar yang terautentikasi")
 #     gambar1 = pilih_gambar()
-#     print("Silahkan Pilih Gambar yang akan di cek autentikasinya")
-#     gambar2 = pilih_gambar()
+#     # print("Silahkan Pilih Gambar yang akan di cek autentikasinya")
+#     # gambar2 = pilih_gambar()
 
 #     image1 = cv2.imread(gambar1)
 #     manipulated1 = image1.copy()
