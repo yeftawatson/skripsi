@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -80,7 +80,11 @@ def upload_file():
                 is_authenticated = authenticate_image(image1, manipulated_image, threshold)
                 results.append(is_authenticated)
 
-            return render_template('index.html', message='File berhasil diupload', original_image=filepath, manipulated_image_paths=manipulated_image_paths, results=results)
+            # Ubah path gambar menjadi URL
+            original_image = '/' + filepath
+            manipulated_image_paths = ['/' + path for path in manipulated_image_paths]
+
+            return render_template('index.html', message='File berhasil diupload', original_image=original_image, manipulated_image_paths=manipulated_image_paths, results=results)
 
     return render_template('index.html')
 
