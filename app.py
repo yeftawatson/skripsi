@@ -57,11 +57,17 @@ def upload_file():
             faktor_skala_up = float(request.form['faktor_skala_up'])
             faktor_skala_down = float(request.form['faktor_skala_down'])
             gamma = int(request.form['gamma'])
+            compress_scale = int(request.form['compress_scale'])
 
             manipulated_images = []
             manipulated_images.append(cv2.resize(image1, None, fx=faktor_skala_up, fy=faktor_skala_up, interpolation=cv2.INTER_AREA))
             manipulated_images.append(cv2.resize(image1, None, fx=faktor_skala_down, fy=faktor_skala_down, interpolation=cv2.INTER_AREA))
             manipulated_images.append(np.clip(image1 + gamma, 0, 255))
+            
+            # Mengompresi gambar
+            compress_filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'compressed_image.jpg')
+            cv2.imwrite(compress_filepath, image1, [cv2.IMWRITE_JPEG_QUALITY, compress_scale])
+            manipulated_images.append(cv2.imread(compress_filepath))
 
             # Simpan gambar yang dimanipulasi
             manipulated_image_paths = []
