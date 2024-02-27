@@ -35,6 +35,7 @@ def authenticate_image(image1, image2, threshold):
     print(hash1, hash2)
     
     distance = hamming_distance(hash1, hash2)
+    print(distance)
     
     if distance <= threshold:
         return True
@@ -81,7 +82,7 @@ if __name__ == "__main__":
     
 
     # Set ambang batas
-    threshold = 0.1
+    threshold = 8
     
     # Autentikasi gambar
     is_authenticated1 = authenticate_image(image1, manipulated1, threshold)

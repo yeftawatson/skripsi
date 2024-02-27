@@ -77,7 +77,7 @@ def upload_file():
                 manipulated_image_paths.append(manipulated_image_path)
 
             # Set ambang batas
-            threshold = 0.1
+            threshold = 8 #0.125
 
             # Autentikasi gambar
             results = []
