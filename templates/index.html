@@ -3,13 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Gambar</title>
+    <title>Image Authentication</title>
 </head>
 <body>
-    <h1>Upload Gambar</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".png, .jpg, .jpeg">
+    <h1>Image Authentication</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="text" name="faktor_skala_up" placeholder="Faktor Skala Up">
+        <input type="text" name="faktor_skala_down" placeholder="Faktor Skala Down">
+        <input type="text" name="gamma" placeholder="Gamma">
         <input type="submit" value="Upload">
     </form>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
+    {% if original_image %}
+    <h2>Gambar Asli:</h2>
+    <img src="{{ original_image }}" alt="Original Image">
+    {% endif %}
+    {% if manipulated_image_paths %}
+    <h2>Gambar yang Dimanipulasi:</h2>
+    {% for manipulated_image_path in manipulated_image_paths %}
+    <img src="{{ manipulated_image_path }}" alt="Manipulated Image">
+    {% endfor %}
+    {% endif %}
+    {% if results %}
+    <h2>Hasil Autentikasi:</h2>
+    <ul>
+        {% for result in results %}
+        <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 </body>
 </html>
