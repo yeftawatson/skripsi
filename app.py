@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from scipy.fftpack import dct
 import os
+import pywt
 
 app = Flask(__name__)
 
@@ -37,6 +38,43 @@ def authenticate_image(image1, image2, threshold):
     else:
         return False
 
+def wavelet_hash(image, hash_size=8):
+    coeffs = pywt.dwt2(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 'haar')
+    LL, (LH, HL, HH) = coeffs
+    hash_code = ""
+    for i in range(hash_size):
+        for j in range(hash_size):
+            hash_code += "1" if LH[i, j] > LH[i + 1, j + 1] else "0"
+    return hash_code
+
+def authenticate_wavelet_hash(image1, image2, threshold):
+    hash1 = wavelet_hash(image1)
+    hash2 = wavelet_hash(image2)
+    distance = hamming_distance(hash1, hash2)
+    if distance <= threshold:
+        return True
+    else:
+        return False
+
+def average_hash(image, hash_size=8):
+    resized_image = cv2.resize(image, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
+    gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
+    average_value = np.mean(gray_image)
+    hash_code = ""
+    for i in range(hash_size):
+        for j in range(hash_size):
+            hash_code += "1" if gray_image[i, j] > average_value else "0"
+    return hash_code
+
+def authenticate_average_hash(image1, image2, threshold):
+    hash1 = average_hash(image1)
+    hash2 = average_hash(image2)
+    distance = hamming_distance(hash1, hash2)
+    if distance <= threshold:
+        return True
+    else:
+        return False
+    
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
@@ -80,19 +118,28 @@ def upload_file():
             threshold = 8 #0.125
 
             # Autentikasi gambar
-            results = []
+            # Autentikasi gambar
+            results_dct = []
+            results_wavelet = []
+            results_average = []
             for manipulated_image_path in manipulated_image_paths:
                 manipulated_image = cv2.imread(manipulated_image_path)
-                is_authenticated = authenticate_image(image1, manipulated_image, threshold)
-                results.append(is_authenticated)
+                is_authenticated_dct = authenticate_image(image1, manipulated_image, threshold)
+                is_authenticated_wavelet = authenticate_wavelet_hash(image1, manipulated_image, threshold)
+                is_authenticated_average = authenticate_average_hash(image1, manipulated_image, threshold)
+                results_dct.append(is_authenticated_dct)
+                results_wavelet.append(is_authenticated_wavelet)
+                results_average.append(is_authenticated_average)
 
             # Ubah path gambar menjadi URL
             original_image = '/' + filepath
             manipulated_image_paths = ['/' + path for path in manipulated_image_paths]
 
-            return render_template('index.html', message='File berhasil diupload', original_image=original_image, manipulated_image_paths=manipulated_image_paths, results=results)
+            return render_template('index.html', message='File berhasil diupload', original_image=original_image, manipulated_image_paths=manipulated_image_paths, results_dct=results_dct, results_wavelet=results_wavelet, results_average=results_average)
+
 
     return render_template('index.html')
 
-if __name__ == '__main__':
+
+if __name__ == '__main__': 
     app.run(debug=True)
