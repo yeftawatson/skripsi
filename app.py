@@ -4,6 +4,8 @@ import numpy as np
 from scipy.fftpack import dct
 import os
 import pywt
+import random
+
 
 app = Flask(__name__)
 
@@ -75,6 +77,21 @@ def authenticate_average_hash(image1, image2, threshold):
     else:
         return False
     
+def rotate_image(image, angle):
+    center = tuple(np.array(image.shape[1::-1]) / 2)
+    rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated_image = cv2.warpAffine(image, rotation_matrix, image.shape[1::-1], flags=cv2.INTER_LINEAR)
+    return rotated_image
+
+def skew_image_random(image):
+    rows, cols, _ = image.shape
+    skew_scale = random.uniform(-1, 1)  # Menghasilkan nilai acak antara -1 dan 1 untuk skala skew
+    skew_matrix = np.float32([[1, skew_scale, 0], [0, 1, 0]])
+    skewed_image = cv2.warpAffine(image, skew_matrix, (cols, rows), borderMode=cv2.BORDER_CONSTANT, borderValue=(255, 255, 255))
+    return skewed_image
+
+
+    
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
@@ -101,7 +118,25 @@ def upload_file():
             manipulated_images.append(cv2.resize(image1, None, fx=faktor_skala_up, fy=faktor_skala_up, interpolation=cv2.INTER_AREA))
             manipulated_images.append(cv2.resize(image1, None, fx=faktor_skala_down, fy=faktor_skala_down, interpolation=cv2.INTER_AREA))
             manipulated_images.append(np.clip(image1 + gamma, 0, 255))
+            # Baca nilai derajat rotasi dari form
+            rotasi_degrees = int(request.form['rotasi']) if 'rotasi' in request.form else 0
+
+            # Manipulasi rotasi gambar
+            rotated_image = rotate_image(image1, rotasi_degrees)
+
+            # Tambahkan gambar hasil rotasi ke dalam array manipulated_images
+            manipulated_images.append(rotated_image)
             
+            
+
+            # Manipulasi skew gambar
+            skewed_image = skew_image_random(image1)
+
+            # Tambahkan gambar hasil skew ke dalam array manipulated_images
+            manipulated_images.append(skewed_image)
+
+
+
             # Mengompresi gambar
             compress_filepath = os.path.join(app.config['UPLOAD_FOLDER'], 'compressed_image.jpg')
             cv2.imwrite(compress_filepath, image1, [cv2.IMWRITE_JPEG_QUALITY, compress_scale])
@@ -136,7 +171,8 @@ def upload_file():
             manipulated_image_paths = ['/' + path for path in manipulated_image_paths]
 
             return render_template('index.html', message='File berhasil diupload', original_image=original_image, manipulated_image_paths=manipulated_image_paths, results_dct=results_dct, results_wavelet=results_wavelet, results_average=results_average)
-
+        
+        
 
     return render_template('index.html')
 
