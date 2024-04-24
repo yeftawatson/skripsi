@@ -4,54 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Authentication</title>
+    <style>
+        /* Gaya navbar */
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            padding: 10px;
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .navbar a:hover {
+            background-color: #45a049; /* Aksen hijau saat mouse hover */
+            color: white;
+        }
+
+        .navbar a.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        /* Gaya lainnya */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1, h2 {
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 30px;
+        }
+        input[type="text"], input[type="file"], input[type="submit"] {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <h1>Image Authentication</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <input type="text" name="faktor_skala_up" placeholder="Faktor Skala Up">
-        <input type="text" name="faktor_skala_down" placeholder="Faktor Skala Down">
-        <input type="text" name="gamma" placeholder="Gamma">
-        <input type="text" name="rotasi" placeholder="Derajat Rotasi">
-        <input type="text" name="compress_scale" placeholder="Skala Kompresi (0-100)">
-        <input type="submit" value="Upload">
-    </form>
-    {% if message %}
-    <p>{{ message }}</p>
-    {% endif %}
-    {% if results_dct %}
-    <h2>Hasil Autentikasi (Perceptual Hash):</h2>
-    <ul>
-        {% for result in results_dct %}
-        <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="#home">Image Authentication</a>
+    </div>
+
+    <!-- Konten -->
+    <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+        <h1>Image Authentication</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <input type="text" name="faktor_skala_up" placeholder="Faktor Skala Up">
+            <input type="text" name="faktor_skala_down" placeholder="Faktor Skala Down">
+            <input type="text" name="gamma" placeholder="Gamma">
+            <input type="text" name="rotasi" placeholder="Derajat Rotasi">
+            <input type="text" name="compress_scale" placeholder="Skala Kompresi (0-100)">
+            <input type="submit" value="Upload">
+        </form>
+        <!-- Pesan -->
+        {% if message %}
+        <p>{{ message }}</p>
+        {% endif %}
+        <!-- Hasil Autentikasi -->
+        {% if results_dct %}
+        <h2>Hasil Autentikasi (Perceptual Hash):</h2>
+        <ul>
+            {% for result in results_dct %}
+            <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% if results_wavelet %}
+        <h2>Hasil Autentikasi (Wavelet Hash):</h2>
+        <ul>
+            {% for result in results_wavelet %}
+            <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% if results_average %}
+        <h2>Hasil Autentikasi (Average Hash):</h2>
+        <ul>
+            {% for result in results_average %}
+            <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <!-- Gambar Asli -->
+        {% if original_image %}
+        <h2>Gambar Asli:</h2>
+        <img src="{{ original_image }}" alt="Original Image">
+        {% endif %}
+        <!-- Gambar yang Dimanipulasi -->
+        {% if manipulated_image_paths %}
+        <h2>Gambar yang Dimanipulasi:</h2>
+        {% for manipulated_image_path in manipulated_image_paths %}
+        <img src="{{ manipulated_image_path }}" alt="Manipulated Image">
         {% endfor %}
-    </ul>
-    {% endif %}
-    {% if results_wavelet %}
-    <h2>Hasil Autentikasi (Wavelet Hash):</h2>
-    <ul>
-        {% for result in results_wavelet %}
-        <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% if results_average %}
-    <h2>Hasil Autentikasi (Average Hash):</h2>
-    <ul>
-        {% for result in results_average %}
-        <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% if original_image %}
-    <h2>Gambar Asli:</h2>
-    <img src="{{ original_image }}" alt="Original Image">
-    {% endif %}
-    {% if manipulated_image_paths %}
-    <h2>Gambar yang Dimanipulasi:</h2>
-    {% for manipulated_image_path in manipulated_image_paths %}
-    <img src="{{ manipulated_image_path }}" alt="Manipulated Image">
-    {% endfor %}
-    {% endif %}
+        {% endif %}
+    </div>
 </body>
 </html>
