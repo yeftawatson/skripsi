@@ -12,12 +12,17 @@
         <input type="text" name="faktor_skala_up" placeholder="Faktor Skala Up">
         <input type="text" name="faktor_skala_down" placeholder="Faktor Skala Down">
         <input type="text" name="gamma" placeholder="Gamma">
+<<<<<<< HEAD
+=======
+        <input type="text" name="rotasi" placeholder="Derajat Rotasi">
+>>>>>>> parent of 10a6a28 (front index done)
         <input type="text" name="compress_scale" placeholder="Skala Kompresi (0-100)">
         <input type="submit" value="Upload">
     </form>
     {% if message %}
     <p>{{ message }}</p>
     {% endif %}
+<<<<<<< HEAD
     {% if original_image %}
     <h2>Gambar Asli:</h2>
     <img src="{{ original_image }}" alt="Original Image">
@@ -32,9 +37,44 @@
     <h2>Hasil Autentikasi:</h2>
     <ul>
         {% for result in results %}
+=======
+    {% if results_dct %}
+    <h2>Hasil Autentikasi (Perceptual Hash):</h2>
+    <ul>
+        {% for result in results_dct %}
+>>>>>>> parent of 10a6a28 (front index done)
         <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
         {% endfor %}
     </ul>
     {% endif %}
+<<<<<<< HEAD
+=======
+    {% if results_wavelet %}
+    <h2>Hasil Autentikasi (Wavelet Hash):</h2>
+    <ul>
+        {% for result in results_wavelet %}
+        <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if results_average %}
+    <h2>Hasil Autentikasi (Average Hash):</h2>
+    <ul>
+        {% for result in results_average %}
+        <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if original_image %}
+    <h2>Gambar Asli:</h2>
+    <img src="{{ original_image }}" alt="Original Image">
+    {% endif %}
+    {% if manipulated_image_paths %}
+    <h2>Gambar yang Dimanipulasi:</h2>
+    {% for manipulated_image_path in manipulated_image_paths %}
+    <img src="{{ manipulated_image_path }}" alt="Manipulated Image">
+    {% endfor %}
+    {% endif %}
+>>>>>>> parent of 10a6a28 (front index done)
 </body>
 </html>
