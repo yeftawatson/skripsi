@@ -5,6 +5,7 @@ from scipy.fftpack import dct
 import os
 import pywt
 import random
+import imagehash
 
 
 app = Flask(__name__)
@@ -16,14 +17,32 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def dct_hash(image, hash_size=8):
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    dct_result = dct(dct(gray_image, axis=0), axis=1)
+# def dct_hash(image, hash_size=16):
+#     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     dct_result = dct(dct(gray_image, axis=0), axis=1)
+#     hash_code = ""
+#     for i in range(hash_size):
+#         for j in range(hash_size):
+#             hash_code += "1" if dct_result[i, j] > dct_result[i + 1, j + 1] else "0"
+#     print ("dct \n",hash_code)
+#     return hash_code
+
+
+def dct_hash(image):
+    resized_image = cv2.resize(image, (32, 32), interpolation=cv2.INTER_AREA)
+    gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
+    dct_result = dct(dct(gray_image, axis=0, norm='ortho'), axis=1, norm='ortho')
+    dct_low_freq = dct_result[1:9, 1:9]
+    mean_val = np.mean(dct_low_freq)
     hash_code = ""
-    for i in range(hash_size):
-        for j in range(hash_size):
-            hash_code += "1" if dct_result[i, j] > dct_result[i + 1, j + 1] else "0"
+    for i in range(8):  # hash_size = 8 (dari langkah ke-iv)
+        for j in range(8):  # hash_size = 8 (dari langkah ke-iv)
+            hash_code += '1' if dct_low_freq[i, j] > mean_val else '0'
+
+    print("dct hash:\n", hash_code)
+
     return hash_code
+
 
 def hamming_distance(hash1, hash2):
     if len(hash1) != len(hash2):
@@ -35,28 +54,50 @@ def authenticate_image(image1, image2, threshold):
     hash1 = dct_hash(image1)
     hash2 = dct_hash(image2)
     distance = hamming_distance(hash1, hash2)
+    print (distance)
     if distance <= threshold:
         return True
     else:
         return False
+    
+# def wavelet_hash(image, hash_size=8):
+#     resized_image = cv2.resize(image, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
+#     gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
+#     coeffs = pywt.dwt2(gray_image, 'haar')
+    
+#     LL, (LH, HL, HH) = coeffs
+#     hash_code = ""
+#     for i in range(hash_size):
+#         for j in range(hash_size):
+#             hash_code += "1" if LH[i, j] > LH[i + 1, j + 1] else "0"
+    
+#     return hash_code
 
+#BELOM FIX
 def wavelet_hash(image, hash_size=8):
-    coeffs = pywt.dwt2(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 'haar')
+    resized_image = cv2.resize(image, ((hash_size*2)+1, (hash_size*2)+1), interpolation=cv2.INTER_AREA)
+    gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
+    coeffs = pywt.dwt2(gray_image, 'haar')
     LL, (LH, HL, HH) = coeffs
     hash_code = ""
     for i in range(hash_size):
         for j in range(hash_size):
             hash_code += "1" if LH[i, j] > LH[i + 1, j + 1] else "0"
+    print ("wavelet \n" , hash_code)
     return hash_code
+
+
 
 def authenticate_wavelet_hash(image1, image2, threshold):
     hash1 = wavelet_hash(image1)
     hash2 = wavelet_hash(image2)
     distance = hamming_distance(hash1, hash2)
+    print (distance)
     if distance <= threshold:
         return True
     else:
         return False
+
 
 def average_hash(image, hash_size=8):
     resized_image = cv2.resize(image, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
@@ -66,12 +107,14 @@ def average_hash(image, hash_size=8):
     for i in range(hash_size):
         for j in range(hash_size):
             hash_code += "1" if gray_image[i, j] > average_value else "0"
+    print ("avg \n",hash_code)
     return hash_code
 
 def authenticate_average_hash(image1, image2, threshold):
     hash1 = average_hash(image1)
     hash2 = average_hash(image2)
     distance = hamming_distance(hash1, hash2)
+    print (distance)
     if distance <= threshold:
         return True
     else:
