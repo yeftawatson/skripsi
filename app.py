@@ -74,18 +74,33 @@ def authenticate_image(image1, image2, threshold):
 #     return hash_code
 
 #BELOM FIX
+# def wavelet_hash(image, hash_size=8):
+#     resized_image = cv2.resize(image, ((hash_size*2)+1, (hash_size*2)+1), interpolation=cv2.INTER_AREA)
+#     gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
+#     coeffs = pywt.dwt2(gray_image, 'haar')
+#     LL, (LH, HL, HH) = coeffs
+#     hash_code = ""
+#     for i in range(hash_size):
+#         for j in range(hash_size):
+#             hash_code += "1" if LH[i, j] > LH[i + 1, j + 1] else "0"
+#     print ("wavelet \n" , hash_code)
+#     return hash_code
+
 def wavelet_hash(image, hash_size=8):
-    resized_image = cv2.resize(image, ((hash_size*2)+1, (hash_size*2)+1), interpolation=cv2.INTER_AREA)
+    target_size = (hash_size * 2, hash_size * 2)
+    resized_image = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
     gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
     coeffs = pywt.dwt2(gray_image, 'haar')
     LL, (LH, HL, HH) = coeffs
+    mean_LH = np.mean(LH)
+    quantized_LH = (LH > mean_LH).astype(int)
     hash_code = ""
     for i in range(hash_size):
         for j in range(hash_size):
-            hash_code += "1" if LH[i, j] > LH[i + 1, j + 1] else "0"
-    print ("wavelet \n" , hash_code)
+            hash_code += "1" if quantized_LH[i, j] > 0 else "0"
+    assert len(hash_code) == 64
+    print ("wav \n",hash_code)
     return hash_code
-
 
 
 def authenticate_wavelet_hash(image1, image2, threshold):
