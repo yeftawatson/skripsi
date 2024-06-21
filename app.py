@@ -5,7 +5,6 @@ from scipy.fftpack import dct
 import os
 import pywt
 import random
-import imagehash
 
 
 app = Flask(__name__)
@@ -35,8 +34,8 @@ def dct_hash(image):
     dct_low_freq = dct_result[1:9, 1:9]
     mean_val = np.mean(dct_low_freq)
     hash_code = ""
-    for i in range(8):  # hash_size = 8 (dari langkah ke-iv)
-        for j in range(8):  # hash_size = 8 (dari langkah ke-iv)
+    for i in range(8): 
+        for j in range(8): 
             hash_code += '1' if dct_low_freq[i, j] > mean_val else '0'
 
     print("dct hash:\n", hash_code)
@@ -55,10 +54,15 @@ def authenticate_image(image1, image2, threshold):
     hash2 = dct_hash(image2)
     distance = hamming_distance(hash1, hash2)
     print (distance)
+    
+
     if distance <= threshold:
+        
         return True
     else:
+    
         return False
+        
     
 # def wavelet_hash(image, hash_size=8):
 #     resized_image = cv2.resize(image, (hash_size, hash_size), interpolation=cv2.INTER_AREA)
@@ -87,7 +91,7 @@ def authenticate_image(image1, image2, threshold):
 #     return hash_code
 
 def wavelet_hash(image, hash_size=8):
-    target_size = (hash_size * 2, hash_size * 2)
+    target_size = (hash_size * 4, hash_size * 4)
     resized_image = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
     gray_image = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
     coeffs = pywt.dwt2(gray_image, 'haar')
@@ -108,10 +112,13 @@ def authenticate_wavelet_hash(image1, image2, threshold):
     hash2 = wavelet_hash(image2)
     distance = hamming_distance(hash1, hash2)
     print (distance)
+    
+    
     if distance <= threshold:
         return True
     else:
         return False
+    
 
 
 def average_hash(image, hash_size=8):
@@ -130,6 +137,8 @@ def authenticate_average_hash(image1, image2, threshold):
     hash2 = average_hash(image2)
     distance = hamming_distance(hash1, hash2)
     print (distance)
+
+
     if distance <= threshold:
         return True
     else:
@@ -143,8 +152,10 @@ def rotate_image(image, angle):
 
 def skew_image_random(image):
     rows, cols, _ = image.shape
-    skew_scale = random.uniform(-1, 1)  # Menghasilkan nilai acak antara -1 dan 1 untuk skala skew
-    skew_matrix = np.float32([[1, skew_scale, 0], [0, 1, 0]])
+    skew_scale_x = random.uniform(-1, 1)  # Random value for horizontal skew
+    skew_scale_y = random.uniform(-1, 1)  # Random value for vertical skew
+    skew_matrix = np.float32([[1, skew_scale_x, 0], [0, 1, 0]])
+    print(skew_matrix)
     skewed_image = cv2.warpAffine(image, skew_matrix, (cols, rows), borderMode=cv2.BORDER_CONSTANT, borderValue=(255, 255, 255))
     return skewed_image
 
@@ -208,7 +219,8 @@ def upload_file():
                 manipulated_image_paths.append(manipulated_image_path)
 
             # Set ambang batas
-            threshold = 8 #0.125
+            threshold = 1
+
 
             # Autentikasi gambar
             # Autentikasi gambar
