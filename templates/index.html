@@ -122,8 +122,8 @@
         <ul>
             {% set descriptions = ["Upscaling      ", "Downscaling    ", "Intensitas     ", "Rotasi         ", "Skew          ", "Kompresi File  "] %}
             {% for index in range(results_dct|length) %}
-            <li >{{ descriptions[index] }}: {{ "Gambar terautentikasi." if results_dct[index] else "Gambar tidak
-                terautentikasi." }}</li>
+            <li >{{ descriptions[index] }}: {{ "Gambar terautentikasi.🔴" if results_dct[index] else "Gambar tidak
+                terautentikasi.🟢" }}</li>
             {% endfor %}
         </ul>
         {% endif %}
@@ -133,8 +133,8 @@
         <ul>
             {% set descriptions = ["Upscaling      ", "Downscaling    ", "Intensitas     ", "Rotasi         ", "Skew          ", "Kompresi File  "] %}
             {% for index in range(results_wavelet|length) %}
-            <li>{{ descriptions[index] }}: {{ "Gambar terautentikasi." if results_wavelet[index] else "Gambar tidak
-                terautentikasi." }}</li>
+            <li>{{ descriptions[index] }}: {{ "Gambar terautentikasi.🔴" if results_wavelet[index] else "Gambar tidak
+                terautentikasi.🟢" }}</li>
             {% endfor %}
         </ul>
         {% endif %}
@@ -145,8 +145,8 @@
         <ul>
             {% set descriptions = ["Upscaling      ", "Downscaling    ", "Intensitas     ", "Rotasi         ", "Skew          ", "Kompresi File  "] %}
             {% for index in range(results_average|length) %}
-            <li>{{ descriptions[index] }}: {{ "Gambar terautentikasi." if results_average[index] else "Gambar tidak
-                terautentikasi." }}</li>
+            <li>{{ descriptions[index] }}: {{ "Gambar terautentikasi.🔴" if results_average[index] else "Gambar tidak
+                terautentikasi.🟢" }}</li>
             {% endfor %}
         </ul>
         {% endif %}
