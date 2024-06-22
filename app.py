@@ -219,10 +219,10 @@ def upload_file():
                 manipulated_image_paths.append(manipulated_image_path)
 
             # Set ambang batas
-            threshold = 1
+            threshold = 1 #0.02
 
 
-            # Autentikasi gambar
+    
             # Autentikasi gambar
             results_dct = []
             results_wavelet = []

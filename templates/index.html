@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +24,8 @@
         }
 
         .navbar a:hover {
-            background-color: #45a049; /* Aksen hijau saat mouse hover */
+            background-color: #45a049;
+            /* Aksen hijau saat mouse hover */
             color: white;
         }
 
@@ -40,13 +42,19 @@
             background-color: #f4f4f4;
             color: #333;
         }
-        h1, h2 {
+
+        h1,
+        h2 {
             margin-bottom: 20px;
         }
+
         form {
             margin-bottom: 30px;
         }
-        input[type="text"], input[type="file"], input[type="submit"] {
+
+        input[type="text"],
+        input[type="file"],
+        input[type="submit"] {
             margin-bottom: 10px;
             padding: 8px;
             border: 1px solid #ccc;
@@ -54,22 +62,27 @@
             width: 100%;
             box-sizing: border-box;
         }
+
         input[type="submit"] {
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
         }
+
         input[type="submit"]:hover {
             background-color: #45a049;
         }
+
         ul {
             list-style-type: none;
             padding: 0;
         }
+
         li {
             margin-bottom: 10px;
         }
+
         img {
             max-width: 100%;
             height: auto;
@@ -78,6 +91,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <div class="navbar">
@@ -101,30 +115,43 @@
         <p>{{ message }}</p>
         {% endif %}
         <!-- Hasil Autentikasi -->
+
+        <!-- DCT -->
         {% if results_dct %}
         <h2>Hasil Autentikasi (Perceptual Hash):</h2>
         <ul>
-            {% for result in results_dct %}
-            <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+            {% set descriptions = ["Upscaling      ", "Downscaling    ", "Intensitas     ", "Rotasi         ", "Skew          ", "Kompresi File  "] %}
+            {% for index in range(results_dct|length) %}
+            <li >{{ descriptions[index] }}: {{ "Gambar terautentikasi." if results_dct[index] else "Gambar tidak
+                terautentikasi." }}</li>
             {% endfor %}
         </ul>
         {% endif %}
+
         {% if results_wavelet %}
         <h2>Hasil Autentikasi (Wavelet Hash):</h2>
         <ul>
-            {% for result in results_wavelet %}
-            <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+            {% set descriptions = ["Upscaling      ", "Downscaling    ", "Intensitas     ", "Rotasi         ", "Skew          ", "Kompresi File  "] %}
+            {% for index in range(results_wavelet|length) %}
+            <li>{{ descriptions[index] }}: {{ "Gambar terautentikasi." if results_wavelet[index] else "Gambar tidak
+                terautentikasi." }}</li>
             {% endfor %}
         </ul>
         {% endif %}
+
+
         {% if results_average %}
         <h2>Hasil Autentikasi (Average Hash):</h2>
         <ul>
-            {% for result in results_average %}
-            <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+            {% set descriptions = ["Upscaling      ", "Downscaling    ", "Intensitas     ", "Rotasi         ", "Skew          ", "Kompresi File  "] %}
+            {% for index in range(results_average|length) %}
+            <li>{{ descriptions[index] }}: {{ "Gambar terautentikasi." if results_average[index] else "Gambar tidak
+                terautentikasi." }}</li>
             {% endfor %}
         </ul>
         {% endif %}
+
+
         <!-- Gambar Asli -->
         {% if original_image %}
         <h2>Gambar Asli:</h2>
@@ -139,4 +166,38 @@
         {% endif %}
     </div>
 </body>
+
 </html>
+
+
+
+
+<!-- {% if results_dct %}
+        <h2>Hasil Autentikasi (Perceptual Hash):</h2>
+        <ul>
+            {% for result in results_dct %}
+            <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+
+
+{% if results_wavelet %}
+<h2>Hasil Autentikasi (Wavelet Hash):</h2>
+<ul>
+    {% for result in results_wavelet %}
+    <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if results_average %}
+<h2>Hasil Autentikasi (Average Hash):</h2>
+<ul>
+    {% for result in results_average %}
+    <li>{{ "Gambar terautentikasi." if result else "Gambar tidak terautentikasi." }}</li>
+    {% endfor %}
+</ul>
+{% endif %} -->
+
